@@ -44,32 +44,32 @@ class myListener(StreamListener):
         if notification["type"] == "reblog":
             toot = str(html.document_fromstring(notification["status"]["content"]).text_content())
             user = notification["account"]["display_name"]
-            device = str(r.get("koyuspace-app/device/"+notification["status"]["account"])).replace("b'", "").replace("'", "")
+            device = str(r.get("koyuspace-app/device/"+notification["status"]["account"]["username"])).replace("b'", "").replace("'", "")
             push_service = FCMNotification(api_key=fcm_token)
             push_service.notify_single_device(registration_id=device, message_title=user+" boosted your hop", message_body=toot)
             print(notification["account"]["acct"]+"'s notification sent to "+device)
         if notification["type"] == "favourite":
             toot = str(html.document_fromstring(notification["status"]["content"]).text_content())
             user = notification["account"]["display_name"]
-            device = str(r.get("koyuspace-app/device/"+notification["status"]["account"])).replace("b'", "").replace("'", "")
+            device = str(r.get("koyuspace-app/device/"+notification["status"]["account"]["username"])).replace("b'", "").replace("'", "")
             push_service = FCMNotification(api_key=fcm_token)
             push_service.notify_single_device(registration_id=device, message_title=user+" favourited your hop", message_body=toot)
             print(notification["account"]["acct"]+"'s notification sent to "+device)
         if notification["type"] == "follow":
             user = notification["account"]["display_name"]
-            device = str(r.get("koyuspace-app/device/"+notification["account"]["acct"])).replace("b'", "").replace("'", "")
+            device = str(r.get("koyuspace-app/device/"+notification["status"]["account"]["username"])).replace("b'", "").replace("'", "")
             push_service = FCMNotification(api_key=fcm_token)
             push_service.notify_single_device(registration_id=device, message_title="Someone followed you", message_body=user+" followed you")
             print(notification["account"]["acct"]+"'s notification sent to "+device)
         if notification["type"] == "follow_request":
             user = notification["account"]["display_name"]
-            device = str(r.get("koyuspace-app/device/"+notification["account"]["acct"])).replace("b'", "").replace("'", "")
+            device = str(r.get("koyuspace-app/device/"+notification["status"]["account"]["username"])).replace("b'", "").replace("'", "")
             push_service = FCMNotification(api_key=fcm_token)
             push_service.notify_single_device(registration_id=device, message_title="Someone sent a follow request", message_body=user+" sent a follow request to you")
             print(notification["account"]["acct"]+"'s notification sent to "+device)
         if notification["type"] == "poll":
             toot = str(html.document_fromstring(notification["status"]["content"]).text_content())
-            device = str(r.get("koyuspace-app/device/"+notification["account"]["acct"])).replace("b'", "").replace("'", "")
+            device = str(r.get("koyuspace-app/device/"+notification["status"]["account"]["username"])).replace("b'", "").replace("'", "")
             push_service = FCMNotification(api_key=fcm_token)
             push_service.notify_single_device(registration_id=device, message_title="A poll has ended", message_body=toot)
             print(notification["account"]["acct"]+"'s notification sent to "+device)
