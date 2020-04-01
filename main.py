@@ -13,13 +13,14 @@ pushservice = "https://pushservice.koyu.space"
 fcm_token = os.environ["FCM_TOKEN"]
 r = redis.Redis(host='localhost', port=6379, db=0)
 
-Mastodon.create_app(
-    "koyu.space App",
-    api_base_url = instance,
-    to_file = "clientcred",
-    scopes=['read', 'write', 'follow', 'push'],
-    redirect_uris=pushservice+"/callback"
-)
+if not os.path.exists("clientcred"):
+    Mastodon.create_app(
+        "koyu.space App",
+        api_base_url = instance,
+        to_file = "clientcred",
+        scopes=['read', 'write', 'follow', 'push'],
+        redirect_uris=pushservice+"/callback"
+    )
 
 mastodon = Mastodon(
     client_id = "clientcred",
