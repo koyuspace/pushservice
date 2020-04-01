@@ -96,7 +96,7 @@ def callback():
     print(mastodon.account_verify_credentials()["username"]+" registered with "+device+" and code "+code)
     r.set("koyuspace-app/codes", str(r.get("koyuspace-app/codes")).replace("b'", "").replace("'", "")+","+code)
     r.set("koyuspace-app/code/"+device, code)
-    r.set("koyuspace-app/device/"+mastodon.account_verify_credentials()["username"], code)
+    r.set("koyuspace-app/device/"+mastodon.account_verify_credentials()["username"], device)
     redirect(instance+"/web/timelines/home")
 
 run(host='0.0.0.0', port=40040, server="tornado")
