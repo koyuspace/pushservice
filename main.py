@@ -32,7 +32,8 @@ ccred = f.readlines()
 f.close()
 
 class myListener(StreamListener):
-    def on_notification(self, notification, username):
+    def on_notification(self, notification):
+        username = mastodon.account_verify_credentials()["username"]
         if notification["type"] == "mention":
             toot = str(html.document_fromstring(notification["status"]["content"]).text_content())
             user = notification["account"]["display_name"]
@@ -91,7 +92,7 @@ def callback():
     device = request.query['device'] # pylint: disable=unsubscriptable-object
     code = request.query['code'] # pylint: disable=unsubscriptable-object
     mastodon.log_in(code=code, redirect_uri=pushservice+"/callback?device="+device, scopes=['read', 'write', 'follow', 'push'])
-    listener = myListener(username=mastodon.account_verify_credentials()["username"])
+    listener = myListener()
     mastodon.stream_user(listener, run_async=True)
     print(mastodon.account_verify_credentials()["username"]+" registered with "+device+" and code "+code)
     r.set("koyuspace-app/codes", str(r.get("koyuspace-app/codes")).replace("b'", "").replace("'", "")+","+code)
