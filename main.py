@@ -90,7 +90,7 @@ def callback():
     if not mastodon.account_verify_credentials()["username"] in loggedin:
         listener = myListener()
         mastodon.stream_user(listener, run_async=True, reconnect_async=True, reconnect_async_wait_sec=5)
-    print(mastodon.account_verify_credentials()["username"]+" registered with "+device+" and code "+code)
+        print(mastodon.account_verify_credentials()["username"]+" registered with "+device+" and code "+code)
     r.set("koyuspace-app/codes", str(r.get("koyuspace-app/codes")).replace("b'", "").replace("'", "")+","+code)
     r.set("koyuspace-app/code/"+device, code)
     r.set("koyuspace-app/device/"+mastodon.account_verify_credentials()["username"], device)
