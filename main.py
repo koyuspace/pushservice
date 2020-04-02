@@ -34,6 +34,7 @@ sendnotify = False
 
 class myListener(StreamListener):
     def on_notification(self, notification):
+        global sendnotify
         if not sendnotify:
             sendnotify = True
         if sendnotify:
