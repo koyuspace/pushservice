@@ -72,12 +72,11 @@ class myListener(StreamListener):
 @get("/register")
 def register():
     device = request.query['device'] # pylint: disable=unsubscriptable-object
-    code = str(r.get("koyuspace-app/code/"+device)).replace("b'", "").replace("'", "")
-    try:
-        mastodon.log_in(code=code, redirect_uri=pushservice+"/callback?device="+device, scopes=['read', 'write', 'follow', 'push'])
-        print(mastodon.account_verify_credentials()["username"]+" logged in with "+device+" and code "+code)
+    username = str(r.get("koyuspace-app/username/"+device)).replace("b'", "").replace("'", "")
+    global loggedin
+    if username in loggedin:
         redirect(instance+"/web/timelines/home")
-    except:
+    else:
         url = mastodon.auth_request_url(client_id="clientcred", redirect_uris=pushservice+"/callback?device="+device, scopes=['read', 'write', 'follow', 'push'], force_login=False)
         redirect(url)
 
