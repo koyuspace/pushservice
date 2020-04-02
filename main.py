@@ -54,9 +54,9 @@ class myListener(StreamListener):
             print(notification["account"]["acct"]+"'s notification sent to "+device)
         if notification["type"] == "favourite":
             toot = str(html.document_fromstring(notification["status"]["content"]).text_content())
+            user = notification["account"]["display_name"]
             if user == "":
                 user = notification["account"]["username"]
-            user = notification["account"]["display_name"]
             device = str(r.get("koyuspace-app/device/"+notification["status"]["account"]["username"])).replace("b'", "").replace("'", "")
             push_service = FCMNotification(api_key=fcm_token)
             push_service.notify_single_device(registration_id=device, message_title=user+" favourited your hop", message_body=toot, sound="Default")
