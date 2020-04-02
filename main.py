@@ -11,6 +11,7 @@ import os
 instance = "https://koyu.space"
 pushservice = "https://pushservice.koyu.space"
 fcm_token = os.environ["FCM_TOKEN"]
+loggedin = ""
 r = redis.Redis(host='localhost', port=6379, db=0)
 
 if not os.path.exists("clientcred"):
@@ -85,8 +86,8 @@ def callback():
     device = request.query['device'] # pylint: disable=unsubscriptable-object
     code = request.query['code'] # pylint: disable=unsubscriptable-object
     mastodon.log_in(code=code, redirect_uri=pushservice+"/callback?device="+device, scopes=['read', 'write', 'follow', 'push'])
-    ddevice = str(r.get("koyuspace-app/device/"+mastodon.account_verify_credentials()["username"])).replace("b'", "").replace("'", "")
-    if ddevice != device:
+    global loggedin
+    if not mastodon.account_verify_credentials()["username"] in loggedin:
         listener = myListener()
         mastodon.stream_user(listener, run_async=True, reconnect_async=True, reconnect_async_wait_sec=5)
     print(mastodon.account_verify_credentials()["username"]+" registered with "+device+" and code "+code)
@@ -94,6 +95,7 @@ def callback():
     r.set("koyuspace-app/code/"+device, code)
     r.set("koyuspace-app/device/"+mastodon.account_verify_credentials()["username"], device)
     r.set("koyuspace-app/username/"+device, mastodon.account_verify_credentials()["username"])
+    loggedin = loggedin+mastodon.account_verify_credentials()["username"]+","
     redirect(instance+"/web/timelines/home")
 
 run(host='0.0.0.0', port=40040, server="tornado")
