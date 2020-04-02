@@ -85,8 +85,10 @@ def callback():
     device = request.query['device'] # pylint: disable=unsubscriptable-object
     code = request.query['code'] # pylint: disable=unsubscriptable-object
     mastodon.log_in(code=code, redirect_uri=pushservice+"/callback?device="+device, scopes=['read', 'write', 'follow', 'push'])
-    listener = myListener()
-    mastodon.stream_user(listener, run_async=True, reconnect_async=True, reconnect_async_wait_sec=5)
+    ddevice = str(r.get("koyuspace-app/device/"+mastodon.account_verify_credentials()["username"])).replace("b'", "").replace("'", "")
+    if ddevice != device:
+        listener = myListener()
+        mastodon.stream_user(listener, run_async=True, reconnect_async=True, reconnect_async_wait_sec=5)
     print(mastodon.account_verify_credentials()["username"]+" registered with "+device+" and code "+code)
     r.set("koyuspace-app/codes", str(r.get("koyuspace-app/codes")).replace("b'", "").replace("'", "")+","+code)
     r.set("koyuspace-app/code/"+device, code)
