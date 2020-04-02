@@ -33,7 +33,6 @@ f.close()
 
 class myListener(StreamListener):
     def on_notification(self, notification):
-        username = mastodon.account_verify_credentials()["username"]
         if notification["type"] == "mention":
             toot = str(html.document_fromstring(notification["status"]["content"]).text_content())
             user = notification["account"]["display_name"]
@@ -45,35 +44,17 @@ class myListener(StreamListener):
         if notification["type"] == "reblog":
             toot = str(html.document_fromstring(notification["status"]["content"]).text_content())
             user = notification["account"]["display_name"]
-            device = str(r.get("koyuspace-app/device/"+username)).replace("b'", "").replace("'", "")
+            device = str(r.get("koyuspace-app/device/"+notification["status"]["account"]["username"])).replace("b'", "").replace("'", "")
             push_service = FCMNotification(api_key=fcm_token)
             push_service.notify_single_device(registration_id=device, message_title=user+" boosted your hop", message_body=toot)
-            print(username+"'s notification sent to "+device)
+            print(notification["account"]["acct"]+"'s notification sent to "+device)
         if notification["type"] == "favourite":
             toot = str(html.document_fromstring(notification["status"]["content"]).text_content())
             user = notification["account"]["display_name"]
-            device = str(r.get("koyuspace-app/device/"+username)).replace("b'", "").replace("'", "")
+            device = str(r.get("koyuspace-app/device/"+notification["status"]["account"]["username"])).replace("b'", "").replace("'", "")
             push_service = FCMNotification(api_key=fcm_token)
             push_service.notify_single_device(registration_id=device, message_title=user+" favourited your hop", message_body=toot)
-            print(username+"'s notification sent to "+device)
-        if notification["type"] == "follow":
-            user = notification["account"]["display_name"]
-            device = str(r.get("koyuspace-app/device/"+username)).replace("b'", "").replace("'", "")
-            push_service = FCMNotification(api_key=fcm_token)
-            push_service.notify_single_device(registration_id=device, message_title="Someone followed you", message_body=user+" followed you")
-            print(username+"'s notification sent to "+device)
-        if notification["type"] == "follow_request":
-            user = notification["account"]["display_name"]
-            device = str(r.get("koyuspace-app/device/"+username)).replace("b'", "").replace("'", "")
-            push_service = FCMNotification(api_key=fcm_token)
-            push_service.notify_single_device(registration_id=device, message_title="Someone sent a follow request", message_body=user+" sent a follow request to you")
-            print(username+"'s notification sent to "+device)
-        if notification["type"] == "poll":
-            toot = str(html.document_fromstring(notification["status"]["content"]).text_content())
-            device = str(r.get("koyuspace-app/device/"+username)).replace("b'", "").replace("'", "")
-            push_service = FCMNotification(api_key=fcm_token)
-            push_service.notify_single_device(registration_id=device, message_title="A poll has ended", message_body=toot)
-            print(username+"'s notification sent to "+device)
+            print(notification["account"]["acct"]+"'s notification sent to "+device)
 
 @get("/register")
 def register():
@@ -93,7 +74,7 @@ def callback():
     code = request.query['code'] # pylint: disable=unsubscriptable-object
     mastodon.log_in(code=code, redirect_uri=pushservice+"/callback?device="+device, scopes=['read', 'write', 'follow', 'push'])
     listener = myListener()
-    mastodon.stream_user(listener, run_async=True, reconnect_async=True, reconnect_async_wait_sec=5)
+    mastodon.stream_user(listener, run_async=True)
     print(mastodon.account_verify_credentials()["username"]+" registered with "+device+" and code "+code)
     r.set("koyuspace-app/codes", str(r.get("koyuspace-app/codes")).replace("b'", "").replace("'", "")+","+code)
     r.set("koyuspace-app/code/"+device, code)
