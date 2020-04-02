@@ -44,27 +44,33 @@ class myListener(StreamListener):
                     user = notification["account"]["username"]
                 for mention in notification["status"]["mentions"]:
                     device = str(r.get("koyuspace-app/device/"+mention["acct"])).replace("b'", "").replace("'", "")
-                    push_service = FCMNotification(api_key=fcm_token)
-                    push_service.notify_single_device(registration_id=device, message_title=user+" mentioned you", message_body=toot, sound="Default")
-                    print(mention["acct"]+"'s notification sent to "+device)
+                    userdev = str(r.get("koyuspace-app/username/"+device)).replace("b'", "").replace("'", "")
+                    if userdev == mention["acct"]:
+                        push_service = FCMNotification(api_key=fcm_token)
+                        push_service.notify_single_device(registration_id=device, message_title=user+" mentioned you", message_body=toot, sound="Default")
+                        print(mention["acct"]+"'s notification sent to "+device)
             if notification["type"] == "reblog":
                 toot = str(html.document_fromstring(notification["status"]["content"]).text_content())
                 user = notification["account"]["display_name"]
                 if user == "":
                     user = notification["account"]["username"]
                 device = str(r.get("koyuspace-app/device/"+notification["status"]["account"]["username"])).replace("b'", "").replace("'", "")
-                push_service = FCMNotification(api_key=fcm_token)
-                push_service.notify_single_device(registration_id=device, message_title=user+" boosted your hop", message_body=toot, sound="Default")
-                print(notification["account"]["acct"]+"'s notification sent to "+device)
+                userdev = str(r.get("koyuspace-app/username/"+device)).replace("b'", "").replace("'", "")
+                if userdev == notification["status"]["account"]["username"]:
+                    push_service = FCMNotification(api_key=fcm_token)
+                    push_service.notify_single_device(registration_id=device, message_title=user+" boosted your hop", message_body=toot, sound="Default")
+                    print(notification["account"]["acct"]+"'s notification sent to "+device)
             if notification["type"] == "favourite":
                 toot = str(html.document_fromstring(notification["status"]["content"]).text_content())
                 user = notification["account"]["display_name"]
                 if user == "":
                     user = notification["account"]["username"]
                 device = str(r.get("koyuspace-app/device/"+notification["status"]["account"]["username"])).replace("b'", "").replace("'", "")
-                push_service = FCMNotification(api_key=fcm_token)
-                push_service.notify_single_device(registration_id=device, message_title=user+" favourited your hop", message_body=toot, sound="Default")
-                print(notification["account"]["acct"]+"'s notification sent to "+device)
+                userdev = str(r.get("koyuspace-app/username/"+device)).replace("b'", "").replace("'", "")
+                if userdev == notification["status"]["account"]["username"]:
+                    push_service = FCMNotification(api_key=fcm_token)
+                    push_service.notify_single_device(registration_id=device, message_title=user+" favourited your hop", message_body=toot, sound="Default")
+                    print(notification["account"]["acct"]+"'s notification sent to "+device)
             sendnotify = False
 
 @get("/register")
@@ -90,6 +96,7 @@ def callback():
     r.set("koyuspace-app/codes", str(r.get("koyuspace-app/codes")).replace("b'", "").replace("'", "")+","+code)
     r.set("koyuspace-app/code/"+device, code)
     r.set("koyuspace-app/device/"+mastodon.account_verify_credentials()["username"], device)
+    r.set("koyuspace-app/username/"+device, mastodon.account_verify_credentials()["username"])
     redirect(instance+"/web/timelines/home")
 
 run(host='0.0.0.0', port=40040, server="tornado")
