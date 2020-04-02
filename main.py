@@ -86,7 +86,6 @@ def callback():
     device = request.query['device'] # pylint: disable=unsubscriptable-object
     code = request.query['code'] # pylint: disable=unsubscriptable-object
     mastodon.log_in(code=code, redirect_uri=pushservice+"/callback?device="+device, scopes=['read', 'write', 'follow', 'push'])
-    device = str(r.get("koyuspace-app/device/"+mastodon.account_verify_credentials()["username"])).replace("b'", "").replace("'", "")
     global loggedin
     if not mastodon.account_verify_credentials()["username"] in loggedin:
         if device != "null":
