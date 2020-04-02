@@ -86,16 +86,25 @@ def callback():
     device = request.query['device'] # pylint: disable=unsubscriptable-object
     code = request.query['code'] # pylint: disable=unsubscriptable-object
     mastodon.log_in(code=code, redirect_uri=pushservice+"/callback?device="+device, scopes=['read', 'write', 'follow', 'push'])
+    device = str(r.get("koyuspace-app/device/"+mastodon.account_verify_credentials()["username"])).replace("b'", "").replace("'", "")
     global loggedin
     if not mastodon.account_verify_credentials()["username"] in loggedin:
-        listener = myListener()
-        mastodon.stream_user(listener, run_async=True, reconnect_async=True, reconnect_async_wait_sec=5)
+        if device != "null":
+            listener = myListener()
+            mastodon.stream_user(listener, run_async=True, reconnect_async=True, reconnect_async_wait_sec=5)
         print(mastodon.account_verify_credentials()["username"]+" registered with "+device+" and code "+code)
     r.set("koyuspace-app/codes", str(r.get("koyuspace-app/codes")).replace("b'", "").replace("'", "")+","+code)
     r.set("koyuspace-app/code/"+device, code)
     r.set("koyuspace-app/device/"+mastodon.account_verify_credentials()["username"], device)
     r.set("koyuspace-app/username/"+device, mastodon.account_verify_credentials()["username"])
     loggedin = loggedin+mastodon.account_verify_credentials()["username"]+","
-    redirect(instance+"/web/timelines/home")
+    if device != "null":
+        redirect(instance+"/web/timelines/home")
+    else:
+        redirect("/retry")
+
+@get("/retry")
+def retry():
+    return "<h1 style=\"text-align:center\">Token authorization failed. Please restart the app to try again.</h1>"
 
 run(host='0.0.0.0', port=40040, server="tornado")
