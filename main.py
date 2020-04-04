@@ -41,33 +41,27 @@ class myListener(StreamListener):
                 user = notification["account"]["username"]
             for mention in notification["status"]["mentions"]:
                 device = str(r.get("koyuspace-app/device/"+mention["acct"])).replace("b'", "").replace("'", "")
-                userdev = str(r.get("koyuspace-app/username/"+device)).replace("b'", "").replace("'", "")
-                if userdev == mention["acct"]:
-                    push_service = FCMNotification(api_key=fcm_token)
-                    push_service.notify_single_device(registration_id=device, message_title=user+" mentioned you", message_body=toot, sound="Default")
-                    print(mention["acct"]+"'s notification sent to "+device)
+                push_service = FCMNotification(api_key=fcm_token)
+                push_service.notify_single_device(registration_id=device, message_title=user+" mentioned you", message_body=toot, sound="Default")
+                print(mention["acct"]+"'s notification sent to "+device)
         if notification["type"] == "reblog":
             toot = str(html.document_fromstring(notification["status"]["content"]).text_content())
             user = notification["account"]["display_name"]
             if user == "":
                 user = notification["account"]["username"]
             device = str(r.get("koyuspace-app/device/"+notification["status"]["account"]["username"])).replace("b'", "").replace("'", "")
-            userdev = str(r.get("koyuspace-app/username/"+device)).replace("b'", "").replace("'", "")
-            if userdev == notification["status"]["account"]["username"]:
-                push_service = FCMNotification(api_key=fcm_token)
-                push_service.notify_single_device(registration_id=device, message_title=user+" boosted your hop", message_body=toot, sound="Default")
-                print(notification["account"]["acct"]+"'s notification sent to "+device)
+            push_service = FCMNotification(api_key=fcm_token)
+            push_service.notify_single_device(registration_id=device, message_title=user+" boosted your hop", message_body=toot, sound="Default")
+            print(notification["account"]["acct"]+"'s notification sent to "+device)
         if notification["type"] == "favourite":
             toot = str(html.document_fromstring(notification["status"]["content"]).text_content())
             user = notification["account"]["display_name"]
             if user == "":
                 user = notification["account"]["username"]
             device = str(r.get("koyuspace-app/device/"+notification["status"]["account"]["username"])).replace("b'", "").replace("'", "")
-            userdev = str(r.get("koyuspace-app/username/"+device)).replace("b'", "").replace("'", "")
-            if userdev == notification["status"]["account"]["username"]:
-                push_service = FCMNotification(api_key=fcm_token)
-                push_service.notify_single_device(registration_id=device, message_title=user+" favourited your hop", message_body=toot, sound="Default")
-                print(notification["account"]["acct"]+"'s notification sent to "+device)
+            push_service = FCMNotification(api_key=fcm_token)
+            push_service.notify_single_device(registration_id=device, message_title=user+" favourited your hop", message_body=toot, sound="Default")
+            print(notification["account"]["acct"]+"'s notification sent to "+device)
 
 @get("/register")
 def register():
