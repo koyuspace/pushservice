@@ -64,10 +64,7 @@ class myListener(StreamListener):
                 push_service.notify_single_device(registration_id=device, message_title=user+" favourited your hop", message_body=toot, sound="favourite")
                 print(notification["account"]["acct"]+"'s notification sent to "+device)
         except:
-            if notification["type"] == "mention":
-                loggedin = loggedin.replace(mention["acct"]+",", "")
-            else:
-                loggedin = loggedin.replace(notification["status"]["account"]["username"]+",", "")
+            pass
 
 @get("/register")
 def register():
