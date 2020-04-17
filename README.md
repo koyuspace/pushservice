@@ -8,4 +8,4 @@ The koyu.space Push Service backend for the app.
 
 ## Setup
 
-Install the requirements with `sudo pip3 install -r requirements.txt` and run the `main.py` file
+Install the requirements with `sudo pip3 install -r requirements.txt` and run the `start.sh` file
