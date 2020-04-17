@@ -9,7 +9,7 @@ import redis
 import os
 
 f = open("pid", "w")
-f.write(os.getpid())
+f.write(str(os.getpid()))
 f.close()
 
 instance = "https://koyu.space"
