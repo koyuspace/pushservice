@@ -8,6 +8,10 @@ from bottle import * # pylint: disable=unused-wildcard-import
 import redis
 import os
 
+f = open("pid", "w")
+f.write(os.getpid())
+f.close()
+
 instance = "https://koyu.space"
 pushservice = "https://pushservice.koyu.space"
 fcm_token = os.environ["FCM_TOKEN"]
