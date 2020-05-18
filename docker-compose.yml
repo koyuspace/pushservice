@@ -1,0 +1,10 @@
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+      - "40040:40040"
+    env_file:
+      - .env
+  redis:
+    image: "redis:alpine"

@@ -1,3 +1,4 @@
 usercred-*
 clientcred
 pid
+.env

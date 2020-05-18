@@ -16,7 +16,10 @@ instance = "https://koyu.space"
 pushservice = "https://pushservice.koyu.space"
 fcm_token = os.environ["FCM_TOKEN"]
 loggedin = ""
-r = redis.Redis(host='localhost', port=6379, db=0)
+REDIS_HOST = "localhost"
+if "REDIS_HOST" in os.environ:
+    REDIS_HOST = os.environ["REDIS_HOST"]
+r = redis.Redis(host=REDIS_HOST, port=6379, db=0)
 
 if not os.path.exists("clientcred"):
     Mastodon.create_app(
