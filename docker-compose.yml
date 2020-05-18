@@ -1,7 +1,7 @@
 version: '3'
 services:
   web:
-    build: .
+    image: koyuawsmbrtn/pushservice
     ports:
       - "40040:40040"
     env_file:
