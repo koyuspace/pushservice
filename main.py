@@ -23,7 +23,7 @@ r = redis.Redis(host=REDIS_HOST, port=6379, db=0)
 
 if not os.path.exists("clientcred"):
     Mastodon.create_app(
-        "koyu.space App",
+        "koyu.space for Android",
         api_base_url = instance,
         to_file = "clientcred",
         scopes=['read', 'write', 'follow', 'push'],
