@@ -52,6 +52,14 @@ class myListener(StreamListener):
                     push_service = FCMNotification(api_key=fcm_token)
                     push_service.notify_single_device(registration_id=device, message_title=user+" mentioned you", message_body=toot, sound="mention")
                     print(mention["acct"]+"'s notification sent to "+device)
+            if notification["type"] == "posted":
+                toot = str(html.document_fromstring(notification["status"]["content"]).text_content())
+                user = notification["account"]["display_name"]
+                if user == "":
+                    user = notification["account"]["username"]
+                device = str(r.get("koyuspace-app/device/"+notification["status"]["account"]["username"])).replace("b'", "").replace("'", "")
+                push_service = FCMNotification(api_key=fcm_token)
+                push_service.notify_single_device(registration_id=device, message_title=user+" just posted", message_body=toot, sound="mention") # Use mention sound here, because we don't have much sounds in the app
             if notification["type"] == "reblog":
                 toot = str(html.document_fromstring(notification["status"]["content"]).text_content())
                 user = notification["account"]["display_name"]
